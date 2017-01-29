@@ -1,13 +1,31 @@
+# Default GOPATH to the current directory
+GOPATH ?= `pwd`
 
-# make everything for here
-all:
+.PHONY: default build build-dev build-prod deploy deploy-static deploy_static
+
+default: build-dev
+
+build: build-prod
+
+# Install dependencies
+deps:
+	set -e
+	set -x
+	go get
+
+# Run with reload
+run:
+	GOPATH=$(GOPATH) go run *.go
+
+# Build binary file locally
+build-dev:
 	set -e
 	set -x
 
-	go build -o fivecalls
+	GOPATH=$(GOPATH) go build -o fivecalls
 	echo "Build done"
 
-build:
+build-prod:
 	set -e
 	set -x
 
@@ -33,6 +51,8 @@ deploy:
 	scp -C fivecalls-linux-amd64 fivecalls@5calls.org:/home/fivecalls/fivecalls-linux-amd64.tmp
 	ssh fivecalls@5calls.org install /home/fivecalls/fivecalls-linux-amd64.tmp /home/fivecalls/fivecalls-linux-amd64
 	echo "Uploaded."
+
+deploy-static: deploy_static
 
 deploy_static:
 	cd .. && gulp deploy
