@@ -4,11 +4,14 @@ var gulp = require('gulp')
   , sass = require('gulp-sass')
   , autoprefixer = require('gulp-autoprefixer')
   , imagemin = require('gulp-imagemin')
+  , util = require('gulp-util')
   , browserify = require('browserify')
   , es2040 = require('es2040')
   , buffer = require('vinyl-buffer')
   , source = require('vinyl-source-stream')
   , uglify = require('gulp-uglify')
+  , http_server = require('http-server')
+  , connect_logger = require('connect-logger')
   ;
 
 var SRC = {
@@ -33,6 +36,17 @@ gulp.task('html', function() {
 
 gulp.task('html:watch', function() {
   gulp.watch(`${SRC.html}/*.html`, ['html']);
+});
+
+gulp.task('html:serve', function (cb) {
+  var server = new http_server.HttpServer({
+    root: 'app/static',
+    before: [connect_logger()]
+  });
+  server.listen(8000, function () {
+    util.log('HTTP server started on port 8000');
+    cb();
+  });
 });
 
 // Compile Sass into CSS
@@ -97,5 +111,5 @@ gulp.task('extra', function() {
     .pipe(gulp.dest(DEST.html));
 });
 
-gulp.task('default', ['html', 'html:watch', 'sass', 'sass:watch', 'copy-images', 'copy-images:watch', 'scripts', 'scripts:watch', 'extra']);
+gulp.task('default', ['html', 'html:watch', 'html:serve', 'sass', 'sass:watch', 'copy-images', 'copy-images:watch', 'scripts', 'scripts:watch', 'extra']);
 gulp.task('deploy', ['html', 'sass', 'build-scripts', 'extra', 'copy-images']);

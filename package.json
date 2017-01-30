@@ -25,6 +25,9 @@
   },
   "dependencies": {
     "choo": "^4.0.0",
+    "connect-logger": "0.0.1",
+    "gulp-util": "^3.0.8",
+    "http-server": "^0.9.0",
     "lodash": "^4.17.2",
     "query-string": "^4.2.3",
     "scroll-into-view": "^1.7.1",
